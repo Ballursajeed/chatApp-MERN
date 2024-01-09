@@ -1,0 +1,13 @@
+
+import Register from "./Register.js";
+import axios from 'axios';
+
+function App() {
+  return (
+  <>
+   <Register />
+  </>
+  );
+}
+
+export default App;
