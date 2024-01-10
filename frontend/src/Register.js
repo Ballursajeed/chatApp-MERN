@@ -1,22 +1,25 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import axios from "axios";
+import { UserContext } from './UserContext.js';
 
 const Register = () => {
 
  const [username,setUsername] = useState('');
  const [password , setPassword] = useState('');
  const [email,setEmail] = useState('');
+ const [isLoginOrRegister,setIsLoginOrRegister] = useState('register');
+
+ const {setLoggedusername, setId} = useContext(UserContext);
 
  const register = async(e) => {
  	e.preventDefault();
- 	console.log("Username:",username);
- 	console.log("email:",email);
- 	console.log("password:",password);
      const {data} = await axios.post('http://localhost:8000/register',{
      userName:username,
      Email:email,
      Password:password
      });
+     setLoggedusername(username)
+     setId(data._id)
      console.log(data);
  }
 
@@ -47,8 +50,15 @@ const Register = () => {
               />
              <button
               className='bg-blue-500 text-white block w-full rounded-sm p-2'
-              >Register
+              > { isLoginOrRegister === 'register' ? 'Register' : 'Login' }
               </button>
+
+             <div className='text-center mt-2'>
+               Already have an account ?
+               <a href='/login'>
+                 Login here </a>
+              </div>
+
             </form>
          </div>
        </>

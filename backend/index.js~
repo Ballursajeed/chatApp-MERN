@@ -1,6 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
-dotenv.config();
+  dotenv.config();
 import mongoose from "mongoose";
 import { User } from "./models/user.model.js"
 import bcrypt from "bcrypt";
@@ -63,14 +63,31 @@ try {
         Password: hashedPassword,
   });
 
-  jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' },(err,token) => {
+  jwt.sign({ userId: user._id, userData: user  }, process.env.JWT_SECRET, { expiresIn: '1h' },(err,token) => {
              if (err) throw err;
-             res.cookie('token',token).status(201).json({
+             res.cookie('token',token,{sameSite:'none',secure:true}).status(201).json({
                   message:"user is registered!",
                   user,
+                  _id:user._id,
                   token
              });
   });
+ });
+
+ app.get('/profile',(req,res) => {
+      const token = req.cookies?.token;
+
+   if (token) {
+        jwt.verify(token,process.env.JWT_SECRET, {}, (err, userData) => {
+                   if (err) throw err;
+
+                 res.json(userData);
+      });
+   } else {
+             res.status(200).json('no token!!');
+   }
+
+
  });
 
 app.listen(PORT , () => console.log("Server is running on PORT:",PORT));

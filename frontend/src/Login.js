@@ -1,26 +1,29 @@
 import { useState, useContext } from 'react';
 import axios from "axios";
 import { UserContext } from './UserContext.js';
+import {useNavigate} from "react-router-dom";
 
-const Register = () => {
+const Login = () => {
+
+   const navigate = useNavigate();
 
  const [username,setUsername] = useState('');
  const [password , setPassword] = useState('');
- const [email,setEmail] = useState('');
- const [isLoginOrRegister,setIsLoginOrRegister] = useState('register');
 
  const {setLoggedusername, setId} = useContext(UserContext);
 
  const register = async(e) => {
  	e.preventDefault();
-     const {data} = await axios.post('http://localhost:8000/register',{
+     const {data} = await axios.post('http://localhost:8000/login',{
      userName:username,
-     Email:email,
      Password:password
      });
      setLoggedusername(username)
      setId(data._id)
      console.log(data);
+     if (data) {
+          navigate('/');
+     }
  }
 
       return(
@@ -35,13 +38,6 @@ const Register = () => {
                className='block w-full rounded-sm p-2 mb-2 border'
               />
               <input
-               value={email}
-               onChange={ev => setEmail(ev.target.value)}
-               type='email'
-               placeholder="email"
-               className='block w-full rounded-sm p-2 mb-2 border'
-              />
-              <input
                value={password}
                onChange={ev => setPassword(ev.target.value)}
                type='password'
@@ -50,17 +46,19 @@ const Register = () => {
               />
              <button
               className='bg-blue-500 text-white block w-full rounded-sm p-2'
-              > { isLoginOrRegister === 'register' ? 'Register' : 'Login' }
+              > Login
               </button>
-            </form>
-            <div className='text-center mt-2'>
-               Already have an account ?
-               <button onClick={() => setIsLoginOrRegister('login')}>
-                 Login here </button>
+
+             <div className='text-center mt-2'>
+              Don not have an account then please
+               <a href='/'>
+                 Register here </a>
               </div>
+
+            </form>
          </div>
        </>
       )
 }
 
-export default Register
+export default Login

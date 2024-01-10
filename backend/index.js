@@ -1,6 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
-dotenv.config();
+  dotenv.config();
 import mongoose from "mongoose";
 import { User } from "./models/user.model.js"
 import bcrypt from "bcrypt";
@@ -63,15 +63,65 @@ try {
         Password: hashedPassword,
   });
 
-  jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' },(err,token) => {
+  jwt.sign({ userId: user._id, userData: user  }, process.env.JWT_SECRET, { expiresIn: '1h' },(err,token) => {
              if (err) throw err;
-             res.cookie('token',token).status(201).json({
+             res.cookie('token',token,{sameSite:'none',secure:true}).status(201).json({
                   message:"user is registered!",
                   user,
                   _id:user._id,
                   token
              });
   });
+ });
+
+ app.post('/login',async(req,res) => {
+   const { userName, Password } = req.body;
+
+  if (!userName || !Password) {
+        res.status(200).json({
+           message:'All fields are required!'
+        })
+  }
+
+  const user = await User.findOne({userName})
+  if (!user) {
+        res.status(400).json({
+              message:"User not found!"
+        })
+  }
+
+  const isMatch = await bcrypt.compare(Password,user.Password);
+
+  if (!isMatch) {
+        res.status(401).json({
+              message:"User name or password is in correct!"
+        })
+  }
+
+ jwt.sign({ userId: user._id, userData: user  }, process.env.JWT_SECRET, { expiresIn: '1h' },(err,token) => {
+             if (err) throw err;
+             res.cookie('token',token,{sameSite:'none',secure:true}).status(200).json({
+                  message:"user loggedIn successfully!",
+                  user,
+                  _id:user._id,
+                  token
+             });
+  });
+
+  })
+
+ app.get('/profile',(req,res) => {
+      const token = req.cookies?.token;
+
+   if (token) {
+        jwt.verify(token,process.env.JWT_SECRET, {}, (err, userData) => {
+                   if (err) throw err;
+
+                 res.json(userData);
+      });
+   } else {
+             res.status(200).json('no token!!');
+   }
  });
 
 app.listen(PORT , () => console.log("Server is running on PORT:",PORT));
