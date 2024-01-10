@@ -94,7 +94,7 @@ try {
 
   if (!isMatch) {
         res.status(401).json({
-              message:"User name or password is in correct!"
+              message:"User name or password is Incorrect!"
         })
   }
 
