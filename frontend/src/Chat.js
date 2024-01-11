@@ -62,7 +62,11 @@ const Chat = () => {
        </div>
       <div className='flex flex-col bg-blue-200 w-2/3 p-2'>
         <div className='flex-grow'>
-         Messages
+         {!selectedUserId && (
+                   <div className='flex flex-grow h-full items-center justify-center '>
+                      <div className='text-gray-400 '>&larr; Selecte a Person from the sidebar</div>
+                   </div>
+         )}
         </div>
         <div className='flex gap-2'>
           <input
