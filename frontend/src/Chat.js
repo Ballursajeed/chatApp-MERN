@@ -8,6 +8,8 @@ const Chat = () => {
  const [ws,setWs] = React.useState(null);
  const [onlinePeople,setOnlinePeople] = React.useState({});
  const [selectedUserId,setSelectedUserId] = React.useState(null);
+ const [newMessageText, setNewMessageText] = React.useState('');
+ const [messages, setMessages] = React.useState([]);
 
  const {username,id} = useContext(UserContext);
 
@@ -25,15 +27,30 @@ const Chat = () => {
        setOnlinePeople(people);
  }
 
- function handleMessage(e) {
-        const messageData = JSON.parse(e.data);
+ function handleMessage(e) {             //receiving a message
+       const messageData = JSON.parse(e.data);
+
+      console.log({e,messageData});
+
        if ('online' in messageData) {
             showOnlinePeople(messageData.online)
+       } else {
+             setMessages(prev => ([...prev,{isOur:false,text:messageData.text}]));
        }
  }
 
  const selectContact = (userId) => {
      setSelectedUserId(userId)
+ }
+
+ const sendMessage = (ev) => { //sending a message
+         ev.preventDefault();
+         ws.send(JSON.stringify({
+                    recipient: selectedUserId,
+                    text: newMessageText,
+         }));
+         setNewMessageText('');
+         setMessages(prev => ([...prev,{text:newMessageText, isOur: true}]));
  }
 
  const onlinePeopleExclOurUse = {...onlinePeople};
@@ -67,18 +84,31 @@ const Chat = () => {
                       <div className='text-gray-400 '>&larr; Selecte a Person from the sidebar</div>
                    </div>
          )}
+
+         {!!selectedUserId && (
+            <div>
+               {messages.map(message => (
+                      <div>{message.text}</div>
+               ))}
+            </div>
+         )}
+
         </div>
-        <div className='flex gap-2'>
+        {!!selectedUserId && (
+        <form className='flex gap-2' onSubmit={sendMessage}>
           <input
            type='text'
+           value={newMessageText}
+           onChange={ev => setNewMessageText(ev.target.value)}
            placeholder='type your message'
            className='bg-white flex-grow border rounded-sm p-2'/>
-           <button className='bg-blue-500 p-2 rounded-sm text-white'>
+          <button type="submit" className='bg-blue-500 p-2 rounded-sm text-white'>
              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
              </svg>
            </button>
-        </div>
+        </form>
+        )}
       </div>
     </div>
    </>

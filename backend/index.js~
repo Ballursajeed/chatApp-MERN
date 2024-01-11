@@ -64,7 +64,7 @@ try {
         Password: hashedPassword,
   });
 
-  jwt.sign({ userId: user._id, userData: user  }, process.env.JWT_SECRET, { expiresIn: '1h' },(err,token) => {
+  jwt.sign({ userId: user._id, userData: user  }, process.env.JWT_SECRET, { expiresIn: '10h' },(err,token) => {
              if (err) throw err;
              res.cookie('token',token,{sameSite:'none',secure:true}).status(201).json({
                   message:"user is registered!",
@@ -99,7 +99,7 @@ try {
         })
   }
 
- jwt.sign({ userId: user._id, userData: user  }, process.env.JWT_SECRET, { expiresIn: '1h' },(err,token) => {
+ jwt.sign({ userId: user._id, userData: user  }, process.env.JWT_SECRET, { expiresIn: '10h' },(err,token) => {
              if (err) throw err;
              res.cookie('token',token,{sameSite:'none',secure:true}).status(200).json({
                   message:"user loggedIn successfully!",
@@ -131,6 +131,8 @@ const wss = new WebSocketServer({server});
 
 wss.on('connection',(connection,req) => {
   console.log('user is connected!');
+
+  //read username and id from the cookie for this connection
   const cookies = req.headers.cookie;
   if (cookies) {
      const tokenCookieString = cookies.split(';').find(str => str.startsWith('token='));
@@ -147,8 +149,20 @@ wss.on('connection',(connection,req) => {
      }
   }
 
-  console.log([...wss.clients].map(c => c.username));
+ connection.on('message',(message) => {
+   const messageData = JSON.parse(message.toString());
+    console.log(messageData);
+    const {recipient,text} = messageData;
+    if (recipient && text) {
+             [...wss.clients]
+                 .filter(c => c.userId === recipient)
+                 .forEach(c => c.send(JSON.stringify({text})));
+    }
 
+ });
+
+  console.log([...wss.clients].map(c => c.username));
+//notify everyone about online people(when someone connects))
   [...wss.clients].forEach(client => {
            client.send(JSON.stringify({
            online: [...wss.clients].map(c => ({userId:c.userId,username:c.username}))}))
