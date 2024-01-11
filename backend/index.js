@@ -64,7 +64,7 @@ try {
         Password: hashedPassword,
   });
 
-  jwt.sign({ userId: user._id, userData: user  }, process.env.JWT_SECRET, { expiresIn: '1h' },(err,token) => {
+  jwt.sign({ userId: user._id, userData: user  }, process.env.JWT_SECRET, { expiresIn: '10h' },(err,token) => {
              if (err) throw err;
              res.cookie('token',token,{sameSite:'none',secure:true}).status(201).json({
                   message:"user is registered!",
@@ -99,7 +99,7 @@ try {
         })
   }
 
- jwt.sign({ userId: user._id, userData: user  }, process.env.JWT_SECRET, { expiresIn: '1h' },(err,token) => {
+ jwt.sign({ userId: user._id, userData: user  }, process.env.JWT_SECRET, { expiresIn: '10h' },(err,token) => {
              if (err) throw err;
              res.cookie('token',token,{sameSite:'none',secure:true}).status(200).json({
                   message:"user loggedIn successfully!",
