@@ -7,6 +7,7 @@ import bcrypt from "bcrypt";
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
+import { WebSocketServer } from 'ws';
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -124,4 +125,36 @@ try {
    }
  });
 
-app.listen(PORT , () => console.log("Server is running on PORT:",PORT));
+const server = app.listen(PORT , () => console.log("Server is running on PORT:",PORT));
+
+const wss = new WebSocketServer({server});
+
+wss.on('connection',(connection,req) => {
+  console.log('user is connected!');
+  const cookies = req.headers.cookie;
+  if (cookies) {
+     const tokenCookieString = cookies.split(';').find(str => str.startsWith('token='));
+     if (tokenCookieString) {
+       const token = tokenCookieString.split('=')[1];
+       if (token) {
+            jwt.verify(token,process.env.JWT_SECRET, {},(err,user) => {
+                if (err) throw err;
+                const { userId, userData } = user;
+                connection.userId = userId;
+                connection.username = userData?.userName;
+            });
+       }
+     }
+  }
+
+  console.log([...wss.clients].map(c => c.username));
+
+  [...wss.clients].forEach(client => {
+           client.send(JSON.stringify({
+           online: [...wss.clients].map(c => ({userId:c.userId,username:c.username}))}))
+           })
+});
+
+
+
+
