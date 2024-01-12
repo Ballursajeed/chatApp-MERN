@@ -2,6 +2,7 @@ import React,{useContext} from "react";
 import Avatar from './Avatar.js';
 import Logo from './Logo.js';
 import { UserContext } from "./UserContext.js";
+import { uniqBy } from 'lodash';
 
 const Chat = () => {
 
@@ -35,7 +36,7 @@ const Chat = () => {
        if ('online' in messageData) {
             showOnlinePeople(messageData.online)
        } else if ('text' in messageData) {
-             setMessages(prev => ([...prev,{isOur:false,text:messageData.text}]));
+             setMessages(prev => ([...prev,{...messageData}]));
        }
  }
 
@@ -50,11 +51,17 @@ const Chat = () => {
                     text: newMessageText,
          }));
          setNewMessageText('');
-         setMessages(prev => ([...prev,{text:newMessageText, isOur: true}]));
+         setMessages(prev => ([...prev,{
+         	text:newMessageText,
+            sender:id,
+            recipient:selectedUserId,
+         	 }]));
  }
 
  const onlinePeopleExclOurUse = {...onlinePeople};
- delete onlinePeopleExclOurUse[id]
+ delete onlinePeopleExclOurUse[id];
+
+ const messagesWithoutDuplecates = uniqBy(messages, 'id');
 
  return(
    <>
@@ -87,8 +94,12 @@ const Chat = () => {
 
          {!!selectedUserId && (
             <div>
-               {messages.map(message => (
-                      <div>{message.text}</div>
+               {messagesWithoutDuplecates.map(message => (
+                      <div>
+                         sender:{message.sender}<br />
+                         my id: {id}<br />
+                        {message.text}
+                       </div>
                ))}
             </div>
          )}
