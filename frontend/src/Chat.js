@@ -34,7 +34,7 @@ const Chat = () => {
 
        if ('online' in messageData) {
             showOnlinePeople(messageData.online)
-       } else {
+       } else if ('text' in messageData) {
              setMessages(prev => ([...prev,{isOur:false,text:messageData.text}]));
        }
  }

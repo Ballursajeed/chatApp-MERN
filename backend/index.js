@@ -3,6 +3,7 @@ import dotenv from "dotenv";
   dotenv.config();
 import mongoose from "mongoose";
 import { User } from "./models/user.model.js"
+import { Message } from "./models/message.model.js"
 import bcrypt from "bcrypt";
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
@@ -149,14 +150,23 @@ wss.on('connection',(connection,req) => {
      }
   }
 
- connection.on('message',(message) => {
+ connection.on('message',async(message) => {
    const messageData = JSON.parse(message.toString());
     console.log(messageData);
     const {recipient,text} = messageData;
     if (recipient && text) {
+    const messageDocument = await Message.create({
+            sender:connection.userId,
+            recipient,
+            text,
+    	 });
              [...wss.clients]
                  .filter(c => c.userId === recipient)
-                 .forEach(c => c.send(JSON.stringify({text,sender:connection?.userId})));
+                 .forEach(c => c.send(JSON.stringify({
+                 	     text,
+                 	     sender:connection?.userId,
+                 	     id:messageDocument._id
+                 	     })));
     }
 
  });

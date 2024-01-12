@@ -30,7 +30,7 @@ const Chat = () => {
  function handleMessage(e) {             //receiving a message
        const messageData = JSON.parse(e.data);
 
-      console.log({ev,messageData});
+      console.log({e,messageData});
 
        if ('online' in messageData) {
             showOnlinePeople(messageData.online)
