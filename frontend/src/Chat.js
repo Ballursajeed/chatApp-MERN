@@ -84,7 +84,7 @@ const Chat = () => {
             </div>
          ))}
        </div>
-      <div className='flex flex-col bg-blue-200 w-2/3 p-2'>
+      <div className='flex flex-col bg-blue-50 w-2/3 p-2'>
         <div className='flex-grow'>
          {!selectedUserId && (
                    <div className='flex flex-grow h-full items-center justify-center '>
@@ -93,13 +93,16 @@ const Chat = () => {
          )}
 
          {!!selectedUserId && (
-            <div>
+            <div className='overflow-y-scroll'>
                {messagesWithoutDuplecates.map(message => (
-                      <div>
+               <div className={(message.sender === id ? 'text-right': 'text-left')}>
+                  <div className={'text-left inline-block p-2 my-2 rounded-md text-sm '
+                       +(message.sender === id ? 'bg-blue-500 text-white':'bg-white text-gray-600')}>
                          sender:{message.sender}<br />
                          my id: {id}<br />
                         {message.text}
-                       </div>
+                   </div>
+               </div>
                ))}
             </div>
          )}
