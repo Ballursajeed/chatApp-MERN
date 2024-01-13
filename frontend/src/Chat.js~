@@ -65,6 +65,7 @@ const connectToWs = () => {
                     text: newMessageText,
          }));
          setNewMessageText('');
+         console.log('new message sent!');
          setMessages(prev => ([...prev,{
          	text:newMessageText,
             sender:id,
@@ -87,7 +88,6 @@ const connectToWs = () => {
  useEffect(() => {
    if (selectedUserId) {
          axios.get('http://localhost:8000/messages/'+selectedUserId).then(response => {
-         	console.log(response.data);
              setMessages(response.data);
          })
 

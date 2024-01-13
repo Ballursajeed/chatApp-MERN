@@ -70,7 +70,7 @@ const connectToWs = () => {
          	text:newMessageText,
             sender:id,
             recipient:selectedUserId,
-            id: Date.now(),
+            _id: Date.now(),
          	 }]));
 
  }
