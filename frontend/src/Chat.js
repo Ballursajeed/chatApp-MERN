@@ -1,4 +1,4 @@
-import React,{useContext} from "react";
+import React,{useContext, useRef,useEffect} from "react";
 import Avatar from './Avatar.js';
 import Logo from './Logo.js';
 import { UserContext } from "./UserContext.js";
@@ -11,6 +11,8 @@ const Chat = () => {
  const [selectedUserId,setSelectedUserId] = React.useState(null);
  const [newMessageText, setNewMessageText] = React.useState('');
  const [messages, setMessages] = React.useState([]);
+
+ const divUnderMessages = useRef();
 
  const {username,id} = useContext(UserContext);
 
@@ -55,8 +57,19 @@ const Chat = () => {
          	text:newMessageText,
             sender:id,
             recipient:selectedUserId,
+            id: Date.now(),
          	 }]));
+
  }
+
+ useEffect(() => {
+   const div = divUnderMessages.current;
+
+   if (div) {
+   div.scrollIntoView({behavior:'smooth',block:'end'});
+   }
+
+ },[messages])
 
  const onlinePeopleExclOurUse = {...onlinePeople};
  delete onlinePeopleExclOurUse[id];
@@ -93,7 +106,9 @@ const Chat = () => {
          )}
 
          {!!selectedUserId && (
-            <div className='overflow-y-scroll'>
+         <div className='mb-4 h-full'>
+            <div className='relative h-full '>
+              <div className='overflow-y-scroll absolute top-0 left-0 right-0 bottom-2'>
                {messagesWithoutDuplecates.map(message => (
                <div className={(message.sender === id ? 'text-right': 'text-left')}>
                   <div className={'text-left inline-block p-2 my-2 rounded-md text-sm '
@@ -104,7 +119,10 @@ const Chat = () => {
                    </div>
                </div>
                ))}
+             <div ref={divUnderMessages}></div>
             </div>
+          </div>
+         </div>
          )}
 
         </div>
