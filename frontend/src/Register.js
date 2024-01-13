@@ -20,7 +20,6 @@ const Register = () => {
      });
      setLoggedusername(username)
      setId(data._id)
-     console.log(data);
  }
 
       return(

@@ -11,7 +11,6 @@ function App() {
 	axios.defaults.withCredentials = true;
 
 	const {username,id} = useContext(UserContext);
-	console.log('Username:',username);
 
   if (username) {
       return(

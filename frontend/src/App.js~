@@ -5,6 +5,7 @@ import axios from 'axios';
 import {Routes, Route} from "react-router-dom"
 import { useContext } from 'react';
 import { UserContext } from './UserContext.js'
+import Chat from './Chat.js'
 
 function App() {
 	axios.defaults.withCredentials = true;
