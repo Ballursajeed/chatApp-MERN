@@ -152,7 +152,12 @@ async function getUserDataFromRequest(req) {
 
     res.json(messages);
 
- })
+ });
+
+ app.get('/people',async(req,res) => {
+   const users = await User.find({},{'_id':1,userName:1});
+   res.json(users);
+ });
 
 const server = app.listen(PORT , () => console.log("Server is running on PORT:",PORT));
 
