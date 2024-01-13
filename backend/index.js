@@ -112,6 +112,10 @@ try {
 
   })
 
+  app.post('/logout',(req,res) => {
+        res.cookie('token','',{sameSite:'none',secure:true}).json('ok');
+  })
+
 async function getUserDataFromRequest(req) {
 	return new Promise((resolve,reject) => {
       const token = req.cookies?.token;
@@ -178,6 +182,7 @@ wss.on('connection',(connection,req) => {
      connection.ping();
      connection.deathTimer = setTimeout(() => {
        connection.isAlive = false;
+       clearInterval(connection.timer)
        connection.terminate();
        notifyAboutOnlinePeople();
      },1000);
@@ -206,7 +211,6 @@ wss.on('connection',(connection,req) => {
 
  connection.on('message',async(message) => {
    const messageData = JSON.parse(message.toString());
-    console.log(messageData);
     const {recipient,text} = messageData;
     if (recipient && text) {
     const messageDocument = await Message.create({
@@ -225,8 +229,6 @@ wss.on('connection',(connection,req) => {
     }
 
  });
-
-  console.log([...wss.clients].map(c => c.username));
 //notify everyone about online people(when someone connects))
  notifyAboutOnlinePeople();
 

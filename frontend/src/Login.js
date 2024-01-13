@@ -20,7 +20,6 @@ const Login = () => {
      });
      setLoggedusername(username)
      setId(data._id)
-     console.log(data);
      if (data) {
           navigate('/');
      }
