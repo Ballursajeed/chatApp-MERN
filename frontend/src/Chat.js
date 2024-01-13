@@ -65,6 +65,7 @@ const connectToWs = () => {
                     text: newMessageText,
          }));
          setNewMessageText('');
+         console.log('new message sent!');
          setMessages(prev => ([...prev,{
          	text:newMessageText,
             sender:id,
@@ -86,7 +87,9 @@ const connectToWs = () => {
 
  useEffect(() => {
    if (selectedUserId) {
-         axios.get('http://localhost:8000/messages/'+selectedUserId)
+         axios.get('http://localhost:8000/messages/'+selectedUserId).then(response => {
+             setMessages(response.data);
+         })
 
    }
  },[selectedUserId])
@@ -95,7 +98,7 @@ const connectToWs = () => {
  const onlinePeopleExclOurUse = {...onlinePeople};
  delete onlinePeopleExclOurUse[id];
 
- const messagesWithoutDuplecates = uniqBy(messages, 'id');
+ const messagesWithoutDuplecates = uniqBy(messages, '_id');
 
  return(
    <>
@@ -134,8 +137,6 @@ const connectToWs = () => {
                <div className={(message.sender === id ? 'text-right': 'text-left')}>
                   <div className={'text-left inline-block p-2 my-2 rounded-md text-sm '
                        +(message.sender === id ? 'bg-blue-500 text-white':'bg-white text-gray-600')}>
-                         sender:{message.sender}<br />
-                         my id: {id}<br />
                         {message.text}
                    </div>
                </div>
