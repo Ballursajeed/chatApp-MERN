@@ -18,10 +18,21 @@ const Chat = () => {
  const {username,id} = useContext(UserContext);
 
  React.useEffect(() => {
+    connectToWs();
+ },[]);
+
+const connectToWs = () => {
     const ws = new WebSocket('ws://localhost:8000');
     setWs(ws);
-    ws.addEventListener('message',handleMessage)
- },[]);
+    ws.addEventListener('message',handleMessage);
+    ws.addEventListener('close',() => {
+       setTimeout(() => {
+                 console.log('Disconnected!, trying to reconnect to the server.....');
+                 connectToWs();
+       },1000)
+
+    })
+}
 
  const showOnlinePeople = (peopleArray) => {
        const people = {};

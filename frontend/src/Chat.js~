@@ -18,10 +18,21 @@ const Chat = () => {
  const {username,id} = useContext(UserContext);
 
  React.useEffect(() => {
+    connectToWs();
+ },[]);
+
+const connectToWs = () => {
     const ws = new WebSocket('ws://localhost:8000');
     setWs(ws);
-    ws.addEventListener('message',handleMessage)
- },[]);
+    ws.addEventListener('message',handleMessage);
+    ws.addEventListener('close',() => {
+       setTimeout(() => {
+                 console.log('Disconnected!');
+                 connectToWs();
+       },1000)
+
+    })
+}
 
  const showOnlinePeople = (peopleArray) => {
        const people = {};
@@ -76,7 +87,7 @@ const Chat = () => {
  useEffect(() => {
    if (selectedUserId) {
          axios.get('http://localhost:8000/messages/'+selectedUserId)
-         .then()
+
    }
  },[selectedUserId])
 
