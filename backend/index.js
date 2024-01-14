@@ -13,6 +13,7 @@ import { WebSocketServer } from 'ws';
 const app = express();
 const PORT = process.env.PORT || 8000;
 
+
 app.use(
   cors({
   	credentials:true,
@@ -20,7 +21,6 @@ app.use(
     methods:['GET','POST','PUT','DELETE']
   })
 );
-
  app.use(express.json());
 app.use(cookieParser());
 
@@ -37,6 +37,9 @@ try {
 
  //mongoDB connection
  connectDB();
+
+
+
 
  app.post('/register',async(req,res) => {
 
@@ -162,6 +165,7 @@ async function getUserDataFromRequest(req) {
    const users = await User.find({},{'_id':1,userName:1});
    res.json(users);
  });
+
 
 const server = app.listen(PORT , () => console.log("Server is running on PORT:",PORT));
 

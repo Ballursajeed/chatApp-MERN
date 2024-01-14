@@ -49,9 +49,13 @@ const connectToWs = () => { //connecting web socket server
        if ('online' in messageData) {
             showOnlinePeople(messageData.online)
        } else if ('text' in messageData) {
-             setMessages(prev => ([...prev,{...messageData}]));
+       	  if (messageData.sender === selectedUserId) {
+            	   setMessages(prev => ([...prev,{...messageData}]));
+       	  }
+
        }
  }
+
 
  const selectContact = (userId) => {
      setSelectedUserId(userId)
@@ -66,7 +70,7 @@ const connectToWs = () => { //connecting web socket server
  }
 
  const sendMessage = (ev) => { //sending a message
-         ev.preventDefault();
+        if (ev) ev.preventDefault();
          ws.send(JSON.stringify({
                     recipient: selectedUserId,
                     text: newMessageText,
@@ -101,7 +105,6 @@ const connectToWs = () => { //connecting web socket server
     offlinePeopleArr.forEach(p => {
           offlinePeople[p._id] = p;
     });
-       console.log(offlinePeople,offlinePeopleArr);
        setOfflinePeople(offlinePeople);
 
   })
@@ -198,6 +201,7 @@ const connectToWs = () => { //connecting web socket server
            onChange={ev => setNewMessageText(ev.target.value)}
            placeholder='type your message'
            className='bg-white flex-grow border rounded-sm p-2'/>
+
           <button type="submit" className='bg-blue-500 p-2 rounded-sm text-white'>
              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />

@@ -9,9 +9,17 @@ import cors from 'cors';
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
 import { WebSocketServer } from 'ws';
+import * as fs from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
 const app = express();
 const PORT = process.env.PORT || 8000;
+
+ // Get the current module's filename
+const __filename = fileURLToPath(import.meta.url);
+// Get the current module's directory
+const __dirname = dirname(__filename);
 
 app.use(
   cors({
@@ -20,7 +28,7 @@ app.use(
     methods:['GET','POST','PUT','DELETE']
   })
 );
-
+ app.use('/uploads',express.static(__dirname + '/uploads'))
  app.use(express.json());
 app.use(cookieParser());
 
@@ -37,6 +45,9 @@ try {
 
  //mongoDB connection
  connectDB();
+
+
+
 
  app.post('/register',async(req,res) => {
 
@@ -163,6 +174,7 @@ async function getUserDataFromRequest(req) {
    res.json(users);
  });
 
+
 const server = app.listen(PORT , () => console.log("Server is running on PORT:",PORT));
 
 const wss = new WebSocketServer({server});
@@ -182,6 +194,7 @@ wss.on('connection',(connection,req) => {
      connection.ping();
      connection.deathTimer = setTimeout(() => {
        connection.isAlive = false;
+       clearInterval(connection.timer)
        connection.terminate();
        notifyAboutOnlinePeople();
      },1000);
@@ -210,7 +223,17 @@ wss.on('connection',(connection,req) => {
 
  connection.on('message',async(message) => {
    const messageData = JSON.parse(message.toString());
-    const {recipient,text} = messageData;
+    const {recipient,text, file} = messageData;
+    if (file) {
+    	    const parts = file.name.split('.');
+    	    const ext = parts[parts.length-1];
+    	    const filename = Date.now() + '.'+ext;
+    	    const path = new URL('uploads/' + filename, import.meta.url).pathname;
+    	    const bufferData = new Buffer(file.data, 'base64');
+          fs.writeFile(path, bufferData,() => {
+               console.log('file saved on path:'+path);
+          })
+    }
     if (recipient && text) {
     const messageDocument = await Message.create({
             sender:connection.userId,
