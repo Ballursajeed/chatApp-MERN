@@ -13,6 +13,8 @@ const Chat = () => {
  const [newMessageText, setNewMessageText] = React.useState('');
  const [messages, setMessages] = React.useState([]);
  const [offLinePeople, setOfflinePeople] = React.useState({});
+ const [searchPeople, setSearchPeople] = React.useState('');
+ const [searchedPeople, setSearchedPeople] = React.useState([]);
 
  const divUnderMessages = useRef();
 
@@ -114,6 +116,17 @@ const connectToWs = () => { //connecting web socket server
    }
  },[selectedUserId])
 
+ const searchKey = async() => {
+         const response = await axios.post('http://localhost:8000/searchPeople',{
+         searchKey: searchPeople
+    });
+    const searchedUserArr = response.data.users;
+    setSearchedPeople(searchedUserArr);
+ }
+
+useEffect(() => {
+    searchKey();
+},[searchPeople])
 
  const onlinePeopleExclOurUse = {...onlinePeople};
  delete onlinePeopleExclOurUse[id];
@@ -136,16 +149,23 @@ const connectToWs = () => { //connecting web socket server
              selected={userId === selectedUserId}
             />
          ))}
-        {Object.keys(offLinePeople).map(userId => (
+         <div className='flex items-center w-full h-15 text-center'>
+            <input placeholder='Search People....'
+             value={searchPeople}
+             onChange={ev => setSearchPeople(ev.target.value)}
+              className='bg-white flex-grow border rounded-sm p-2' />
+         </div>
+         {searchedPeople.map(user => (
             <Contact
-             key={userId}
-             userId={userId}
+             key={user._id}
+             userId={user._id}
              online={false}
-             username={offLinePeople[userId].userName}
-             onClick={() => setSelectedUserId(userId)}
-             selected={userId === selectedUserId}
+             username={user.userName}
+             onClick={() => setSelectedUserId(user._id)}
+             selected={user._id === selectedUserId}
             />
-         ))}
+            ))
+        }
        </div>
         <div className='p-2 text-center flex items-center justify-center'>
          <span

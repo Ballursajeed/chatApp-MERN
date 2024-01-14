@@ -161,6 +161,20 @@ async function getUserDataFromRequest(req) {
 
  });
 
+ app.post('/searchPeople',async(req,res) => {
+
+       const { searchKey } = req.body;
+
+      const regex = new RegExp(searchKey, 'i');
+
+      // Search for users with usernames matching the searchKey
+      const searchedUsers = await User.find({ userName: { $regex: regex } });
+
+      res.status(200).json({ users: searchedUsers })
+
+
+ })
+
  app.get('/people',async(req,res) => {
    const users = await User.find({},{'_id':1,userName:1});
    res.json(users);

@@ -9,17 +9,10 @@ import cors from 'cors';
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
 import { WebSocketServer } from 'ws';
-import * as fs from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 
 const app = express();
 const PORT = process.env.PORT || 8000;
 
- // Get the current module's filename
-const __filename = fileURLToPath(import.meta.url);
-// Get the current module's directory
-const __dirname = dirname(__filename);
 
 app.use(
   cors({
@@ -28,7 +21,6 @@ app.use(
     methods:['GET','POST','PUT','DELETE']
   })
 );
- app.use('/uploads',express.static(__dirname + '/uploads'))
  app.use(express.json());
 app.use(cookieParser());
 
@@ -169,6 +161,20 @@ async function getUserDataFromRequest(req) {
 
  });
 
+ app.post('/searchPeople',async(req,res) => {
+
+       const { searchKey } = req.body;
+
+      const regex = new RegExp(searchKey, 'i');
+
+      // Search for users with usernames matching the searchKey
+      const searchedUsers = await User.findOne({ userName: { $regex: regex } });
+
+      res.status(200).json({ users: searchedUsers })
+
+
+ })
+
  app.get('/people',async(req,res) => {
    const users = await User.find({},{'_id':1,userName:1});
    res.json(users);
@@ -223,17 +229,7 @@ wss.on('connection',(connection,req) => {
 
  connection.on('message',async(message) => {
    const messageData = JSON.parse(message.toString());
-    const {recipient,text, file} = messageData;
-    if (file) {
-    	    const parts = file.name.split('.');
-    	    const ext = parts[parts.length-1];
-    	    const filename = Date.now() + '.'+ext;
-    	    const path = new URL('uploads/' + filename, import.meta.url).pathname;
-    	    const bufferData = new Buffer(file.data, 'base64');
-          fs.writeFile(path, bufferData,() => {
-               console.log('file saved on path:'+path);
-          })
-    }
+    const {recipient,text} = messageData;
     if (recipient && text) {
     const messageDocument = await Message.create({
             sender:connection.userId,
