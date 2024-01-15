@@ -124,8 +124,8 @@ const connectToWs = () => { //connecting web socket server
     setSearchedPeople(searchedUserArr);
  }
 
-const checkSearchedUserInOnlinePeople = (userName) => {
-   console.log('online people',onlinePeopleExclOurUse);
+const checkSearchedUserInOnlinePeople = (userId) => {
+    return onlinePeopleExclOurUse.hasOwnProperty(userId);
 }
 
 useEffect(() => {
@@ -164,7 +164,7 @@ useEffect(() => {
             <Contact
              key={user._id}
              userId={user._id}
-             online={checkSearchedUserInOnlinePeople(user.userName)}
+             online={checkSearchedUserInOnlinePeople(user._id)}
              username={user.userName}
              onClick={() => setSelectedUserId(user._id)}
              selected={user._id === selectedUserId}
