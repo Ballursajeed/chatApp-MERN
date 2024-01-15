@@ -25,7 +25,7 @@ const Chat = () => {
  },[]);
 
 const connectToWs = () => { //connecting web socket server
-    const ws = new WebSocket('wss://localhost:8000');
+    const ws = new WebSocket('wss://chat-app-mern-server.vercel.app');
     setWs(ws);
     ws.addEventListener('message',handleMessage);
     ws.addEventListener('close',() => {
