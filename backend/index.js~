@@ -39,7 +39,9 @@ try {
  connectDB();
 
 
-
+app.get('/',(req,res) => {
+     res.send('Hello world')
+})
 
  app.post('/register',async(req,res) => {
 
