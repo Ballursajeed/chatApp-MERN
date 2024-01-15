@@ -2,6 +2,7 @@ import { useState, useContext } from 'react';
 import axios from "axios";
 import { UserContext } from './UserContext.js';
 import {useNavigate} from "react-router-dom";
+import toast from 'react-hot-toast';
 
 const Login = () => {
 
@@ -18,11 +19,18 @@ const Login = () => {
      userName:username,
      Password:password
      });
+    if (data?.success === false) {
+      const errorMessage = data.message;
+      toast.error(`Error: ${errorMessage}`);
+     }
      setLoggedusername(username)
      setId(data._id)
-     if (data) {
-          navigate('/');
+     if (data?.success) {
+            toast.success("User logged successfully");
+           navigate('/');
      }
+
+
  }
 
       return(

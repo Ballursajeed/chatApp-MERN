@@ -5,7 +5,8 @@ import axios from 'axios';
 import {Routes, Route} from "react-router-dom"
 import { useContext } from 'react';
 import { UserContext } from './UserContext.js'
-import Chat from './Chat.js'
+import Chat from './Chat.js';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
 	axios.defaults.withCredentials = true;
@@ -20,6 +21,7 @@ function App() {
 
   return (
   <>
+ <Toaster />
  <Routes >
    <Route path="/" element={<Register/>} />
    <Route path="/login" element={<Login/>} />

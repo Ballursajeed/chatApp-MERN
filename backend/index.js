@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 8000;
 app.use(
   cors({
   	credentials:true,
-    origin: 'http://localhost:3000',
+    origin: 'https://chat-app-mern-client-ten.vercel.app',
     methods:['GET','POST','PUT','DELETE']
   })
 );
@@ -39,7 +39,9 @@ try {
  connectDB();
 
 
-
+app.get('/',(req,res) => {
+     res.send('Hello world')
+})
 
  app.post('/register',async(req,res) => {
 
@@ -47,6 +49,7 @@ try {
 
    if (!userName || !Email || !Password) {
           res.status(200).json({
+          	   success:false,
                message:"All fields are required!"
           })
    }
@@ -54,6 +57,7 @@ try {
    const existingUser = await User.findOne({ Email });
    if (existingUser) {
             res.status(200).json({
+                  success:false,
                   message:"User is already exist"
             })
             throw new Error("User is already exist!")
@@ -71,6 +75,7 @@ try {
   jwt.sign({ userId: user._id, userData: user  }, process.env.JWT_SECRET, {  },(err,token) => {
              if (err) throw err;
              res.cookie('token',token,{sameSite:'none',secure:true}).status(201).json({
+             	  success:true,
                   message:"user is registered!",
                   user,
                   _id:user._id,
@@ -84,13 +89,15 @@ try {
 
   if (!userName || !Password) {
         res.status(200).json({
+        	  success:false,
            message:'All fields are required!'
         })
   }
 
   const user = await User.findOne({userName})
   if (!user) {
-        res.status(400).json({
+        res.status(200).json({
+              success:false,
               message:"User not found!"
         })
   }
@@ -98,7 +105,8 @@ try {
   const isMatch = await bcrypt.compare(Password,user.Password);
 
   if (!isMatch) {
-        res.status(401).json({
+        res.status(200).json({
+        	     success:false,
               message:"User name or password is Incorrect!"
         })
   }
@@ -106,6 +114,7 @@ try {
  jwt.sign({ userId: user._id, userData: user  }, process.env.JWT_SECRET, { },(err,token) => {
              if (err) throw err;
              res.cookie('token',token,{sameSite:'none',secure:true}).status(200).json({
+             	   success:true,
                   message:"user loggedIn successfully!",
                   user,
                   _id:user._id,

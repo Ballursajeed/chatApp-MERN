@@ -1,5 +1,6 @@
 import { useState, useContext } from 'react';
 import axios from "axios";
+import toast from 'react-hot-toast';
 import { UserContext } from './UserContext.js';
 
 const Register = () => {
@@ -18,8 +19,15 @@ const Register = () => {
      Email:email,
      Password:password
      });
+   if (data?.success === false) {
+      const errorMessage = data.message;
+      toast.error(`Error: ${errorMessage}`);
+     }
      setLoggedusername(username)
-     setId(data._id)
+     setId(data._id);
+     if (data?.success) {
+           toast.success("User Registered successfully");
+     }
  }
 
       return(
