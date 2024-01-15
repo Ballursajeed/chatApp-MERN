@@ -25,7 +25,7 @@ const Chat = () => {
  },[]);
 
 const connectToWs = () => { //connecting web socket server
-    const ws = new WebSocket('ws://localhost:8000');
+    const ws = new WebSocket('ws://chat-app-mern-server.vercel.app');
     setWs(ws);
     ws.addEventListener('message',handleMessage);
     ws.addEventListener('close',() => {
@@ -125,9 +125,6 @@ const connectToWs = () => { //connecting web socket server
  }
 
 const checkSearchedUserInOnlinePeople = (userId) => {
-	 console.log(onlinePeopleExclOurUse.hasOwnProperty(userId));
-	 console.log('user Id:',userId);
-	 console.log('online :',onlinePeopleExclOurUse);
     return onlinePeopleExclOurUse.hasOwnProperty(userId);
 }
 

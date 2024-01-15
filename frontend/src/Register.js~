@@ -27,7 +27,6 @@ const Register = () => {
      setId(data._id);
      if (data?.success) {
            toast.success("User Registered successfully");
-           navigate('/');
      }
  }
 
