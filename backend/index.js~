@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 8000;
 app.use(
   cors({
   	credentials:true,
-    origin: 'https://chat-app-mern-client-ten.vercel.app',
+    origin: 'http://localhost:3000',
     methods:['GET','POST','PUT','DELETE']
   })
 );
