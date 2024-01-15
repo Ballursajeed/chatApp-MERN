@@ -25,7 +25,7 @@ const Chat = () => {
  },[]);
 
 const connectToWs = () => { //connecting web socket server
-    const ws = new WebSocket('wss://chat-app-mern-server.vercel.app');
+    const ws = new WebSocket('wss://chatapp-server-zstg.onrender.com');
     setWs(ws);
     ws.addEventListener('message',handleMessage);
     ws.addEventListener('close',() => {
@@ -59,7 +59,7 @@ const connectToWs = () => { //connecting web socket server
  }
 
  const handleLogout = () => {
-    axios.post('https://chat-app-mern-server.vercel.app/logout').then(() => {
+    axios.post('https://chatapp-server-zstg.onrender.com/logout').then(() => {
     	   setWs(null);
          setId(null);
          setLoggedusername(null);
@@ -93,7 +93,7 @@ const connectToWs = () => { //connecting web socket server
 
 
  useEffect(() => {                  //getting offline people
-  axios.get('https://chat-app-mern-server.vercel.app/people').then(res => {
+  axios.get('https://chatapp-server-zstg.onrender.com/people').then(res => {
        const offlinePeopleArr = res.data
         .filter(p => p._id !== id)
         .filter(p => !Object.keys(onlinePeople).includes(p._id));
@@ -109,7 +109,7 @@ const connectToWs = () => { //connecting web socket server
 
  useEffect(() => {
    if (selectedUserId) {
-         axios.get('https://chat-app-mern-server.vercel.app/messages/'+selectedUserId).then(response => {
+         axios.get('https://chatapp-server-zstg.onrender.com/messages/'+selectedUserId).then(response => {
              setMessages(response.data);
          })
 
@@ -117,7 +117,7 @@ const connectToWs = () => { //connecting web socket server
  },[selectedUserId])
 
  const searchKey = async() => {
-         const response = await axios.post('https://chat-app-mern-server.vercel.app/searchPeople',{
+         const response = await axios.post('https://chatapp-server-zstg.onrender.com/searchPeople',{
          searchKey: searchPeople
     });
     const searchedUserArr = response.data.users;

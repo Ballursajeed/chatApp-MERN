@@ -14,7 +14,7 @@ const Register = () => {
 
  const register = async(e) => {
  	e.preventDefault();
-     const {data} = await axios.post('https://chat-app-mern-server.vercel.app/register',{
+     const {data} = await axios.post('https://chatapp-server-zstg.onrender.com/register',{
      userName:username,
      Email:email,
      Password:password
