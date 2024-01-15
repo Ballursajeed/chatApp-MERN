@@ -18,6 +18,9 @@ export const UserContextProvider = ({children}) => {
 
   useEffect(()=>{
         axios.get('http://localhost:8000/profile').then(response => {
+        	   if (response.data.message) {
+                 alert(response.data.message);
+        	   }
              setId(response?.data?.userId);
             setLoggedusername(response?.data?.userData?.userName);
         })

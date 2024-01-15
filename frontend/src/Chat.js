@@ -124,12 +124,17 @@ const connectToWs = () => { //connecting web socket server
     setSearchedPeople(searchedUserArr);
  }
 
+const checkSearchedUserInOnlinePeople = (userName) => {
+   console.log('online people',onlinePeopleExclOurUse);
+}
+
 useEffect(() => {
     searchKey();
 },[searchPeople])
 
  const onlinePeopleExclOurUse = {...onlinePeople};
  delete onlinePeopleExclOurUse[id];
+
 
  const messagesWithoutDuplecates = uniqBy(messages, '_id');
 
@@ -159,7 +164,7 @@ useEffect(() => {
             <Contact
              key={user._id}
              userId={user._id}
-             online={false}
+             online={checkSearchedUserInOnlinePeople(user.userName)}
              username={user.userName}
              onClick={() => setSelectedUserId(user._id)}
              selected={user._id === selectedUserId}

@@ -68,7 +68,7 @@ try {
         Password: hashedPassword,
   });
 
-  jwt.sign({ userId: user._id, userData: user  }, process.env.JWT_SECRET, { expiresIn: '10h' },(err,token) => {
+  jwt.sign({ userId: user._id, userData: user  }, process.env.JWT_SECRET, {  },(err,token) => {
              if (err) throw err;
              res.cookie('token',token,{sameSite:'none',secure:true}).status(201).json({
                   message:"user is registered!",
@@ -103,7 +103,7 @@ try {
         })
   }
 
- jwt.sign({ userId: user._id, userData: user  }, process.env.JWT_SECRET, { expiresIn: '10h' },(err,token) => {
+ jwt.sign({ userId: user._id, userData: user  }, process.env.JWT_SECRET, { },(err,token) => {
              if (err) throw err;
              res.cookie('token',token,{sameSite:'none',secure:true}).status(200).json({
                   message:"user loggedIn successfully!",
@@ -139,7 +139,15 @@ async function getUserDataFromRequest(req) {
 
    if (token) {
         jwt.verify(token,process.env.JWT_SECRET, {}, (err, userData) => {
-                   if (err) throw err;
+                   if (err) {
+                    f (err.name === 'TokenExpiredError') {
+                       res.status(200).json({
+                             message:'token expired , please re-login or register!'
+                       })
+              } else {
+                          throw err;
+                     }
+                   }
 
                  res.json(userData);
       });
@@ -168,7 +176,7 @@ async function getUserDataFromRequest(req) {
       const regex = new RegExp(searchKey, 'i');
 
       // Search for users with usernames matching the searchKey
-      const searchedUsers = await User.findOne({ userName: { $regex: regex } });
+      const searchedUsers = await User.find({ userName: { $regex: regex } });
 
       res.status(200).json({ users: searchedUsers })
 
@@ -218,11 +226,22 @@ wss.on('connection',(connection,req) => {
        const token = tokenCookieString.split('=')[1];
        if (token) {
             jwt.verify(token,process.env.JWT_SECRET, {},(err,user) => {
-                if (err) throw err;
+             if (err) {
+            // Handle token expiration gracefully
+            if (err.name === 'TokenExpiredError') {
+              // Ask the client to refresh the token or reauthenticate
+              connection.send(JSON.stringify({ message: 'Token expired. Please refresh or reauthenticate.' }));
+              connection.terminate(); // Close the connection
+            } else {
+              throw err;
+            }
+          } else {
                 const { userId, userData } = user;
                 connection.userId = userId;
                 connection.username = userData?.userName;
+              }
             });
+
        }
      }
   }

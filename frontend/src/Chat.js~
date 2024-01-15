@@ -120,14 +120,13 @@ const connectToWs = () => { //connecting web socket server
          const response = await axios.post('http://localhost:8000/searchPeople',{
          searchKey: searchPeople
     });
-    console.log(response.data.users);
     const searchedUserArr = response.data.users;
     setSearchedPeople(searchedUserArr);
-    searchedPeople.map(user => {
-             console.log(user);
-    })
-
  }
+
+const checkSearchedUserInOnlinePeople = (userName) => {
+   console.log(onlinePeopleExclOurUse);
+}
 
 useEffect(() => {
     searchKey();
@@ -135,6 +134,7 @@ useEffect(() => {
 
  const onlinePeopleExclOurUse = {...onlinePeople};
  delete onlinePeopleExclOurUse[id];
+
 
  const messagesWithoutDuplecates = uniqBy(messages, '_id');
 
@@ -164,7 +164,7 @@ useEffect(() => {
             <Contact
              key={user._id}
              userId={user._id}
-             online={false}
+             online={checkSearchedUserInOnlinePeople(user.userName)}
              username={user.userName}
              onClick={() => setSelectedUserId(user._id)}
              selected={user._id === selectedUserId}
