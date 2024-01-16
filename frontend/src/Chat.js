@@ -141,7 +141,7 @@ useEffect(() => {
  return(
    <>
     <div className='flex h-screen'>
-     <div className='bg-white w-1/3 flex flex-col '>
+     <div className='bg-white w-1/3 flex flex-col overflow-y-scroll'>
       <div className='flex-grow'>
          <Logo />
          {Object.keys(onlinePeopleExclOurUse).map(userId => (
@@ -160,7 +160,8 @@ useEffect(() => {
              onChange={ev => setSearchPeople(ev.target.value)}
               className='bg-white flex-grow border rounded-sm p-2' />
          </div>
-         {searchedPeople.map(user => (
+         {
+         	 searchedPeople.map(user => (
             <Contact
              key={user._id}
              userId={user._id}
@@ -171,6 +172,7 @@ useEffect(() => {
             />
             ))
         }
+
        </div>
         <div className='p-2 text-center flex items-center justify-center'>
          <span

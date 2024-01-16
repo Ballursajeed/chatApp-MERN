@@ -17,7 +17,7 @@ export const UserContextProvider = ({children}) => {
   };
 
   useEffect(()=>{
-        axios.get('https://chat-app-mern-server.vercel.app/profile').then(response => {
+        axios.get('http://localhost:8000/profile').then(response => {
         	   if (response.data.message) {
                  alert(response.data.message);
         	   }

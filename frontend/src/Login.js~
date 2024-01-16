@@ -15,7 +15,7 @@ const Login = () => {
 
  const register = async(e) => {
  	e.preventDefault();
-     const {data} = await axios.post('https://chatapp-server-zstg.onrender.com/login',{
+     const {data} = await axios.post('http://localhost:8000/login',{
      userName:username,
      Password:password
      });
@@ -57,7 +57,7 @@ const Login = () => {
               </button>
 
              <div className='text-center mt-2'>
-              Don not have an account then please
+              Don not have an account then please ?
                <a href='/'>
                  Register here </a>
               </div>
